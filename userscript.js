@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MelonToon - AssistAddon
 // @name:zh-CN   西瓜卡通 - 辅助播放插件
-// @namespace    http://tampermonkey.net/
+// @namespace    https://github.com/SMWHff/MelonToon-AssistAddon
 // @version      0.2
 // @description  支持无刷新切换章节，在[我的收藏]里显示最后播放章节、进度、最新章节、播放排序。
 // @author       神梦无痕
