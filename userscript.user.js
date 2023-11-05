@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         西瓜卡通 - 辅助播放插件
 // @namespace    https://github.com/SMWHff/MelonToon-AssistAddon
-// @version      0.2
+// @version      0.3
 // @description  支持无刷新切换章节，在[我的收藏]里显示最后播放章节、进度、最新章节、播放排序。
 // @author       神梦无痕
 // @match        https://cn.xgcartoon.com/*
@@ -30,9 +30,6 @@
         durTime: null
     };
 
-    window.setLocalStorage = GM_setValue;
-    window.getLocalStorage = GM_getValue;
-
 
     var path = window.location.pathname;
     console.log(path);
@@ -44,9 +41,32 @@
         pframePlayer();
     }
 
-    // 从 GM_getValue 获取播放历史
+    // 获取本地存储的JSON对象
+    function GM_getValueJSON(name){
+        var strJSON = GM_getValueEx(name, '{}');
+        return JSON.parse(strJSON);
+    }
+
+    // 设置本地存储的JSON对象
+    function GM_setValueJSON(name, obj){
+        GM_setValueEx(name, JSON.stringify(obj));
+    }
+
+    // 加强版GM_getValue
+    function GM_getValueEx(name, defaultValue){
+        return GM_getValue(name, localStorage.getItem(name) || defaultValue);
+    }
+
+    // 加强版GM_setValue
+    function GM_setValueEx(name, value){
+        localStorage.setItem(name, value);
+        GM_setValue(name, value);
+        return value;
+    }
+
+    // 从本地存储获取播放历史
     function getPlayHistory(dramaTitle) {
-        var history = GM_getValue(historyKey, "{}");
+        var history = GM_getValueEx(historyKey, "{}");
         history = JSON.parse(history);
         if(!history[dramaTitle]){
             history[dramaTitle] = {};
@@ -54,16 +74,15 @@
         return history;
     }
 
-    // 将播放历史保存到 GM_setValue
+    // 将播放历史保存到本地存储
     function savePlayHistory(dramaTitle, video) {
         var history = getPlayHistory(dramaTitle);
         if(video.title) history[dramaTitle].title = video.title;
         if(video.url) history[dramaTitle].url = video.url;
         if(video.curTime) history[dramaTitle].curTime = video.curTime;
         if(video.durTime) history[dramaTitle].durTime = video.durTime;
-        GM_setValue(historyKey, JSON.stringify(history));
-
-        console.log(GM_getValue(historyKey, ''));
+        var ret = GM_setValueEx(historyKey, JSON.stringify(history));
+        console.log(ret);
     }
 
     // 将秒转化为时间格式
@@ -96,14 +115,14 @@
         window.addEventListener('beforeunload', function() {
             window.G_currentVideo.curTime = elevideo.currentTime;
             savePlayHistoryTime(window.G_currentVideo);
-            GM_setValue(getVid() + '_curTime', elevideo.currentTime);
+            GM_setValueEx(getVid() + '_curTime', elevideo.currentTime);
         });
 
         // 页面窗口前保存当前视频到播放历史
         window.addEventListener('unload', function() {
             window.G_currentVideo.curTime = elevideo.currentTime;
             savePlayHistoryTime(window.G_currentVideo);
-            GM_setValue(getVid() + '_curTime', elevideo.currentTime);
+            GM_setValueEx(getVid() + '_curTime', elevideo.currentTime);
         });
 
         var elevideo = document.querySelector("#video_frame");
@@ -118,7 +137,7 @@
             savePlayHistoryTime(window.G_currentVideo);
 
             // 设置历史播放进度
-            var curTime = Number(GM_getValue(getVid() + '_curTime', 0));
+            var curTime = Number(GM_getValueEx(getVid() + '_curTime', 0));
             elevideo.currentTime = curTime;
             console.log('设置历史播放进度：' + curTime);
             elevideo.play();
@@ -135,11 +154,11 @@
         });
         elevideo.addEventListener('pause', function () { //暂停开始执行的函数
             console.log("暂停播放", elevideo.currentTime);
-            GM_setValue(getVid() + '_curTime', elevideo.currentTime);
+            GM_setValueEx(getVid() + '_curTime', elevideo.currentTime);
         });
         elevideo.addEventListener('ended', function () { //结束
             console.log("播放结束");
-            GM_setValue(getVid() + '_curTime', 0);
+            GM_setValueEx(getVid() + '_curTime', 0);
         }, false);
 
         function getVid(){
@@ -148,7 +167,7 @@
         }
 
         function getDramaTitle(){
-            return GM_getValue(getVid());
+            return GM_getValueEx(getVid(), '');
         }
 
         function savePlayHistoryTime(video){
@@ -158,7 +177,7 @@
 
 
     function userBookshelf(){
-        var OrderList = JSON.parse(GM_getValue(OrderKey, "[]"));
+        var OrderList = JSON.parse(GM_getValueEx(OrderKey, "[]"));
         var bookshelfList = [];
         var bookshelfItems = document.querySelectorAll("#layout > div.bookshelf.container .bookshelf-item");
         bookshelfItems.forEach(function(book) {
@@ -182,7 +201,7 @@
             var newVolume = getDetailUpdate(detailURL, btns);
 
             // 获取历史播放记录
-            var history = GM_getValue(historyKey, '{}');
+            var history = GM_getValueEx(historyKey, localStorage.getItem(historyKey) || '{}');
             history = JSON.parse(history);
             var history_book = history[bookTitle];
             if(history_book){
@@ -270,13 +289,13 @@
         var search = src.split('?')[1];
         var params = new URLSearchParams(search);
         var vid = params.get('vid');
-        GM_setValue(vid, window.G_dramaTitle);
+        GM_setValueEx(vid, window.G_dramaTitle);
 
         // 更新播放列表顺序
-        var OrderList = JSON.parse(GM_getValue(OrderKey, "[]"));
+        var OrderList = JSON.parse(GM_getValueEx(OrderKey, "[]"));
         OrderList = OrderList.filter(item => item !== window.G_dramaTitle);
         OrderList.push(window.G_dramaTitle);
-        GM_setValue(OrderKey, JSON.stringify(OrderList));
+        GM_setValueEx(OrderKey, JSON.stringify(OrderList));
 
         // 保存当前页面视频信息
         var aActive = document.querySelector('#video-volumes-items a.active');
