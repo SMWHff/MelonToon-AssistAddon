@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         MelonToon - AssistAddon
-// @name:zh-CN   Î÷¹Ï¿¨Í¨ - ¸¨Öú²¥·Å²å¼ş
+// @name:zh-CN   è¥¿ç“œå¡é€š - è¾…åŠ©æ’­æ”¾æ’ä»¶
 // @namespace    http://tampermonkey.net/
 // @version      0.2
-// @description  Ö§³ÖÎŞË¢ĞÂÇĞ»»ÕÂ½Ú£¬ÔÚ[ÎÒµÄÊÕ²Ø]ÀïÏÔÊ¾×îºó²¥·ÅÕÂ½Ú¡¢½ø¶È¡¢×îĞÂÕÂ½Ú¡¢²¥·ÅÅÅĞò¡£
-// @author       ÉñÃÎÎŞºÛ
+// @description  æ”¯æŒæ— åˆ·æ–°åˆ‡æ¢ç« èŠ‚ï¼Œåœ¨[æˆ‘çš„æ”¶è—]é‡Œæ˜¾ç¤ºæœ€åæ’­æ”¾ç« èŠ‚ã€è¿›åº¦ã€æœ€æ–°ç« èŠ‚ã€æ’­æ”¾æ’åºã€‚
+// @author       ç¥æ¢¦æ— ç—•
 // @match        https://cn.xgcartoon.com/*
 // @match        https://www.xgcartoon.com/*
 // @match        https://pframe.xgcartoon.com/player.htm*
@@ -17,13 +17,13 @@
 (function() {
     'use strict';
 
-    // ²¥·ÅÀúÊ·ÁĞ±íµÄ¼üÃû
+    // æ’­æ”¾å†å²åˆ—è¡¨çš„é”®å
     var historyKey = 'playHistory';
 
-    // ²¥·ÅÀúÊ·ÁĞ±íµÄÏÈºóË³Ğò
+    // æ’­æ”¾å†å²åˆ—è¡¨çš„å…ˆåé¡ºåº
     var OrderKey = 'orderHistory';
 
-    // µ±Ç°²¥·ÅµÄÊÓÆµĞÅÏ¢
+    // å½“å‰æ’­æ”¾çš„è§†é¢‘ä¿¡æ¯
     window.G_currentVideo = {
         title: null,
         url: null,
@@ -45,7 +45,7 @@
         pframePlayer();
     }
 
-    // ´Ó GM_getValue »ñÈ¡²¥·ÅÀúÊ·
+    // ä» GM_getValue è·å–æ’­æ”¾å†å²
     function getPlayHistory(dramaTitle) {
         var history = GM_getValue(historyKey, "{}");
         history = JSON.parse(history);
@@ -55,7 +55,7 @@
         return history;
     }
 
-    // ½«²¥·ÅÀúÊ·±£´æµ½ GM_setValue
+    // å°†æ’­æ”¾å†å²ä¿å­˜åˆ° GM_setValue
     function savePlayHistory(dramaTitle, video) {
         var history = getPlayHistory(dramaTitle);
         if(video.title) history[dramaTitle].title = video.title;
@@ -67,7 +67,7 @@
         console.log(GM_getValue(historyKey, ''));
     }
 
-    // ½«Ãë×ª»¯ÎªÊ±¼ä¸ñÊ½
+    // å°†ç§’è½¬åŒ–ä¸ºæ—¶é—´æ ¼å¼
     function formatTime(seconds) {
         seconds = Math.floor(seconds);
 
@@ -82,7 +82,7 @@
         return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
     }
 
-    // ¸ñÊ½»¯Îª°Ù·ÖºÅ
+    // æ ¼å¼åŒ–ä¸ºç™¾åˆ†å·
     function formatAsPercentage(decimal, minimumFractionDigits = 0, maximumFractionDigits = 0) {
         var formatter = new Intl.NumberFormat('en-US', {
             style: 'percent',
@@ -93,14 +93,14 @@
     }
 
     function pframePlayer(){
-        // Ò³Ãæ¹Ø±ÕÇ°±£´æµ±Ç°ÊÓÆµµ½²¥·ÅÀúÊ·
+        // é¡µé¢å…³é—­å‰ä¿å­˜å½“å‰è§†é¢‘åˆ°æ’­æ”¾å†å²
         window.addEventListener('beforeunload', function() {
             window.G_currentVideo.curTime = elevideo.currentTime;
             savePlayHistoryTime(window.G_currentVideo);
             GM_setValue(getVid() + '_curTime', elevideo.currentTime);
         });
 
-        // Ò³Ãæ´°¿ÚÇ°±£´æµ±Ç°ÊÓÆµµ½²¥·ÅÀúÊ·
+        // é¡µé¢çª—å£å‰ä¿å­˜å½“å‰è§†é¢‘åˆ°æ’­æ”¾å†å²
         window.addEventListener('unload', function() {
             window.G_currentVideo.curTime = elevideo.currentTime;
             savePlayHistoryTime(window.G_currentVideo);
@@ -109,37 +109,37 @@
 
         var elevideo = document.querySelector("#video_frame");
         elevideo.addEventListener('progress', function (e) {
-            // ¿Í»§¶ËÕıÔÚÇëÇóÊı¾İ
-            // console.log('¿Í»§¶ËÕıÔÚÇëÇóÊı¾İ£º', elevideo.buffered.end(0));
+            // å®¢æˆ·ç«¯æ­£åœ¨è¯·æ±‚æ•°æ®
+            // console.log('å®¢æˆ·ç«¯æ­£åœ¨è¯·æ±‚æ•°æ®ï¼š', elevideo.buffered.end(0));
         });
-        elevideo.addEventListener('loadedmetadata', function () { //³É¹¦»ñÈ¡×ÊÔ´³¤¶È
-            //ÊÓÆµµÄ×Ü³¤¶È
-            console.log('ÊÓÆµµÄ×Ü³¤¶È£º' + elevideo.duration);
+        elevideo.addEventListener('loadedmetadata', function () { //æˆåŠŸè·å–èµ„æºé•¿åº¦
+            //è§†é¢‘çš„æ€»é•¿åº¦
+            console.log('è§†é¢‘çš„æ€»é•¿åº¦ï¼š' + elevideo.duration);
             window.G_currentVideo.durTime = elevideo.duration;
             savePlayHistoryTime(window.G_currentVideo);
 
-            // ÉèÖÃÀúÊ·²¥·Å½ø¶È
+            // è®¾ç½®å†å²æ’­æ”¾è¿›åº¦
             var curTime = Number(GM_getValue(getVid() + '_curTime', 0));
             elevideo.currentTime = curTime;
-            console.log('ÉèÖÃÀúÊ·²¥·Å½ø¶È£º' + curTime);
+            console.log('è®¾ç½®å†å²æ’­æ”¾è¿›åº¦ï¼š' + curTime);
             elevideo.play();
         });
 
-        elevideo.addEventListener('play', function () { //²¥·Å¿ªÊ¼Ö´ĞĞµÄº¯Êı
-            console.log("¿ªÊ¼²¥·Å");
+        elevideo.addEventListener('play', function () { //æ’­æ”¾å¼€å§‹æ‰§è¡Œçš„å‡½æ•°
+            console.log("å¼€å§‹æ’­æ”¾");
         });
-        elevideo.addEventListener('playing', function () { //²¥·ÅÖĞ
-            console.log("²¥·ÅÖĞ");
+        elevideo.addEventListener('playing', function () { //æ’­æ”¾ä¸­
+            console.log("æ’­æ”¾ä¸­");
         });
-        elevideo.addEventListener('waiting', function () { //¼ÓÔØ
-            console.log("¼ÓÔØÖĞ");
+        elevideo.addEventListener('waiting', function () { //åŠ è½½
+            console.log("åŠ è½½ä¸­");
         });
-        elevideo.addEventListener('pause', function () { //ÔİÍ£¿ªÊ¼Ö´ĞĞµÄº¯Êı
-            console.log("ÔİÍ£²¥·Å", elevideo.currentTime);
+        elevideo.addEventListener('pause', function () { //æš‚åœå¼€å§‹æ‰§è¡Œçš„å‡½æ•°
+            console.log("æš‚åœæ’­æ”¾", elevideo.currentTime);
             GM_setValue(getVid() + '_curTime', elevideo.currentTime);
         });
-        elevideo.addEventListener('ended', function () { //½áÊø
-            console.log("²¥·Å½áÊø");
+        elevideo.addEventListener('ended', function () { //ç»“æŸ
+            console.log("æ’­æ”¾ç»“æŸ");
             GM_setValue(getVid() + '_curTime', 0);
         }, false);
 
@@ -169,20 +169,20 @@
             var btnBase = book.querySelector(".btn-base");
             var btnBase_span = btnBase.querySelector("span");
 
-            // »ñÈ¡¶¯»­Ãû
+            // è·å–åŠ¨ç”»å
             var bookTitle = bookshelf.textContent || bookshelf.innerText;
 
-            // °´×î½ü²¥·ÅÊ±¼äÅÅĞò
+            // æŒ‰æœ€è¿‘æ’­æ”¾æ—¶é—´æ’åº
             var index = OrderList.indexOf(bookTitle)
             if(index > -1){
                 bookshelfList[index] = book;
             }
 
-            // »ñÈ¡¶¯»­URL
+            // è·å–åŠ¨ç”»URL
             var detailURL = bookshelf.href;
             var newVolume = getDetailUpdate(detailURL, btns);
 
-            // »ñÈ¡ÀúÊ·²¥·Å¼ÇÂ¼
+            // è·å–å†å²æ’­æ”¾è®°å½•
             var history = GM_getValue(historyKey, '{}');
             history = JSON.parse(history);
             var history_book = history[bookTitle];
@@ -193,25 +193,25 @@
                 var duration = history_book.durTime;
                 var progress = "";
 
-                // ¼ÆËã²¥·Å½ø¶È
+                // è®¡ç®—æ’­æ”¾è¿›åº¦
                 if(duration){
-                     progress = "£¨" + formatAsPercentage(seconds / duration) + "£©";
+                     progress = "ï¼ˆ" + formatAsPercentage(seconds / duration) + "ï¼‰";
                 }
 
-                // ĞŞ¸Ä×îºó²¥·Å±êÌâ
+                // ä¿®æ”¹æœ€åæ’­æ”¾æ ‡é¢˜
                 if(chapterTitle){
-                    lastChapter.innerHTML = 'ÉÏ´Î¿´µ½:  ' + chapterTitle + progress;
+                    lastChapter.innerHTML = 'ä¸Šæ¬¡çœ‹åˆ°:  ' + chapterTitle + progress;
                 }
 
-                // ĞŞ¸Ä×îºó²¥·ÅÁ´½Ó
+                // ä¿®æ”¹æœ€åæ’­æ”¾é“¾æ¥
                 if(btnBaseURL){
                     btnBase.href = btnBaseURL;
                 }
             }
         });
 
-        // µ÷ÕûÔªËØË³Ğò
-        // ÉèÖÃ order Îª -1 ¿ÉÒÔÊ¹ÆäÅÅµ½µÚÒ»Î»
+        // è°ƒæ•´å…ƒç´ é¡ºåº
+        // è®¾ç½® order ä¸º -1 å¯ä»¥ä½¿å…¶æ’åˆ°ç¬¬ä¸€ä½
         bookshelfList.forEach(function(ele) {
             ele.style.order = -1;
         });
@@ -219,28 +219,28 @@
 
 
     function getDetailUpdate(URL, btns){
-        // ´´½¨XHRÇëÇó
+        // åˆ›å»ºXHRè¯·æ±‚
         var xhr = new XMLHttpRequest();
         xhr.open('GET', URL, true);
         xhr.responseType = 'document';
 
-        // XHRÇëÇóÍê³ÉºóµÄ´¦Àí
+        // XHRè¯·æ±‚å®Œæˆåçš„å¤„ç†
         xhr.onload = function() {
             if (xhr.status === 200) {
-                // ÅĞ¶Ï¸üĞÂ×´Ì¬
-                var newStatus = "×î½ü¸üĞÂ"
+                // åˆ¤æ–­æ›´æ–°çŠ¶æ€
+                var newStatus = "æœ€è¿‘æ›´æ–°"
                 var newStatusEle = xhr.response.querySelector(".detail-sider > div:has(+ .desk-ad) > div:last-child");
                 if (newStatusEle) {
                     var newStatusText = newStatusEle.textContent || newStatusEle.innerText;
-                    if(newStatusText.search(/^È«\d+»°,/) === 0){
-                        newStatus = "È«±¾Íê½á";
+                    if(newStatusText.search(/^å…¨\d+è¯,/) === 0){
+                        newStatus = "å…¨æœ¬å®Œç»“";
                     }
                 }
 
-                // ÇëÇó³É¹¦£¬»ñÈ¡×îĞÂ»°ÔªËØ
+                // è¯·æ±‚æˆåŠŸï¼Œè·å–æœ€æ–°è¯å…ƒç´ 
                 var newVolumeEle = xhr.response.querySelector(".detail-right__volumes > .row > div:last-child > a");
                 if (newVolumeEle) {
-                    // ·µ»Øµ±Ç°Ò³ÃæµÄ×îĞÂ»°
+                    // è¿”å›å½“å‰é¡µé¢çš„æœ€æ–°è¯
                     newVolumeEle.className = '';
                     var newVolume = newVolumeEle.outerHTML;
                     btns.insertAdjacentHTML('afterbegin', `<div class="new-chapter text-truncate" style="color: var(--color-primary); padding: 6px 0;" data-v-2c578c40="">`+ newStatus +`:  ` + newVolume +`</div>`);
@@ -252,106 +252,106 @@
             }
         };
 
-        // ·¢ËÍXHRÇëÇó
+        // å‘é€XHRè¯·æ±‚
         xhr.send();
 }
 
 
     function inlineVideoSourceSwitch(){
 
-        // »ñÈ¡µ±Ç°µÄ¾çÃû
+        // è·å–å½“å‰çš„å‰§å
         window.G_dramaTitle = '';
         var breadcrumbItem = document.querySelector("nav > ol > a.breadcrumb-item:nth-child(3)")
         if(breadcrumbItem){
             window.G_dramaTitle = breadcrumbItem.textContent || breadcrumbItem.innerText;
         }
 
-        // ¹ØÁª¾çÃûºÍvid
+        // å…³è”å‰§åå’Œvid
         var src = document.querySelector('iframe')?.src;
         var search = src.split('?')[1];
         var params = new URLSearchParams(search);
         var vid = params.get('vid');
         GM_setValue(vid, window.G_dramaTitle);
 
-        // ¸üĞÂ²¥·ÅÁĞ±íË³Ğò
+        // æ›´æ–°æ’­æ”¾åˆ—è¡¨é¡ºåº
         var OrderList = JSON.parse(GM_getValue(OrderKey, "[]"));
         OrderList = OrderList.filter(item => item !== window.G_dramaTitle);
         OrderList.push(window.G_dramaTitle);
         GM_setValue(OrderKey, JSON.stringify(OrderList));
 
-        // ±£´æµ±Ç°Ò³ÃæÊÓÆµĞÅÏ¢
+        // ä¿å­˜å½“å‰é¡µé¢è§†é¢‘ä¿¡æ¯
         var aActive = document.querySelector('#video-volumes-items a.active');
         if(aActive){
-            // ¸¸×é¼ş¹ö¶¯·¨£¬¹ö¶¯µ½ active ÔªËØÎ»ÖÃ
+            // çˆ¶ç»„ä»¶æ»šåŠ¨æ³•ï¼Œæ»šåŠ¨åˆ° active å…ƒç´ ä½ç½®
             var activeParent = aActive.parentElement;
             document.querySelector("#video-volumes-items").scrollTo(0, activeParent.offsetTop - activeParent.offsetHeight);
 
-            // »ñÈ¡a±êÇ©µÄhrefÊôĞÔºÍÎÄ±¾ÄÚÈİ£¨±êÌâ£©
+            // è·å–aæ ‡ç­¾çš„hrefå±æ€§å’Œæ–‡æœ¬å†…å®¹ï¼ˆæ ‡é¢˜ï¼‰
             var href = aActive.getAttribute('href');
             var aActiveTitle = aActive.querySelector('.title');
             var title = aActiveTitle.textContent || aActiveTitle.innerText;
 
-            // ¸üĞÂµ±Ç°ÊÓÆµĞÅÏ¢
+            // æ›´æ–°å½“å‰è§†é¢‘ä¿¡æ¯
             window.G_currentVideo = { title: title, url: href };
             savePlayHistory(window.G_dramaTitle, window.G_currentVideo);
         }
 
-        // »ñÈ¡#video-volumes-itemsÔªËØÏÂµÄËùÓĞa±êÇ©
+        // è·å–#video-volumes-itemså…ƒç´ ä¸‹çš„æ‰€æœ‰aæ ‡ç­¾
         var videoVolumeItems = document.querySelectorAll('#video-volumes-items a');
 
 
-        // Ò³Ãæ¹Ø±ÕÇ°±£´æµ±Ç°ÊÓÆµµ½²¥·ÅÀúÊ·
+        // é¡µé¢å…³é—­å‰ä¿å­˜å½“å‰è§†é¢‘åˆ°æ’­æ”¾å†å²
         window.addEventListener('beforeunload', function() {
             if (window.G_dramaTitle && window.G_currentVideo.title && window.G_currentVideo.url) {
                 savePlayHistory(window.G_dramaTitle, window.G_currentVideo);
             }
         });
 
-        // Ò³Ãæ´°¿ÚÇ°±£´æµ±Ç°ÊÓÆµµ½²¥·ÅÀúÊ·
+        // é¡µé¢çª—å£å‰ä¿å­˜å½“å‰è§†é¢‘åˆ°æ’­æ”¾å†å²
         window.addEventListener('unload', function() {
             if (window.G_dramaTitle && window.G_currentVideo.title && window.G_currentVideo.url) {
                 savePlayHistory(window.G_dramaTitle, window.G_currentVideo);
             }
         });
 
-        // ÎªÃ¿¸öa±êÇ©Ìí¼Óµã»÷ÊÂ¼ş¼àÌıÆ÷
+        // ä¸ºæ¯ä¸ªaæ ‡ç­¾æ·»åŠ ç‚¹å‡»äº‹ä»¶ç›‘å¬å™¨
         videoVolumeItems.forEach(function(item) {
             item.addEventListener('click', function(event) {
-                // ×èÖ¹a±êÇ©µÄÄ¬ÈÏµã»÷ĞĞÎª
+                // é˜»æ­¢aæ ‡ç­¾çš„é»˜è®¤ç‚¹å‡»è¡Œä¸º
                 event.preventDefault();
 
-                // ÒÆ³ıËùÓĞa±êÇ©µÄactiveÀà
+                // ç§»é™¤æ‰€æœ‰aæ ‡ç­¾çš„activeç±»
                 videoVolumeItems.forEach(function(el) {
                     el.classList.remove('active');
                 });
 
-                // ¸øµ±Ç°µã»÷µÄa±êÇ©Ìí¼ÓactiveÀà
+                // ç»™å½“å‰ç‚¹å‡»çš„aæ ‡ç­¾æ·»åŠ activeç±»
                 item.classList.add('active');
 
-                // »ñÈ¡a±êÇ©µÄhrefÊôĞÔºÍÎÄ±¾ÄÚÈİ£¨±êÌâ£©
+                // è·å–aæ ‡ç­¾çš„hrefå±æ€§å’Œæ–‡æœ¬å†…å®¹ï¼ˆæ ‡é¢˜ï¼‰
                 var href = item.getAttribute('href');
                 var item_title = item.querySelector('.title');
                 var title = item_title.textContent || item_title.innerText;
 
-                // ¸üĞÂµ±Ç°ÊÓÆµĞÅÏ¢
+                // æ›´æ–°å½“å‰è§†é¢‘ä¿¡æ¯
                 window.G_currentVideo = { title: title, url: href };
                 savePlayHistory(window.G_dramaTitle, window.G_currentVideo);
 
-                // ´´½¨XHRÇëÇó
+                // åˆ›å»ºXHRè¯·æ±‚
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', href, true);
                 xhr.responseType = 'document';
 
-                // XHRÇëÇóÍê³ÉºóµÄ´¦Àí
+                // XHRè¯·æ±‚å®Œæˆåçš„å¤„ç†
                 xhr.onload = function() {
                     if (xhr.status === 200) {
-                        // ÇëÇó³É¹¦£¬»ñÈ¡iframeÔªËØ
+                        // è¯·æ±‚æˆåŠŸï¼Œè·å–iframeå…ƒç´ 
                         var iframeSrc = xhr.response.querySelector('iframe')?.src;
                         if (iframeSrc) {
-                            // ÕÒµ½µ±Ç°Ò³ÃæµÄiframeÔªËØ
+                            // æ‰¾åˆ°å½“å‰é¡µé¢çš„iframeå…ƒç´ 
                             var currentIframe = document.querySelector('iframe');
                             if (currentIframe) {
-                                // Ìæ»»µ±Ç°Ò³ÃæiframeµÄsrcÊôĞÔ
+                                // æ›¿æ¢å½“å‰é¡µé¢iframeçš„srcå±æ€§
                                 currentIframe.src = iframeSrc;
                             } else {
                                 console.log('No iframe found on the current page to replace src.');
@@ -364,7 +364,7 @@
                     }
                 };
 
-                // ·¢ËÍXHRÇëÇó
+                // å‘é€XHRè¯·æ±‚
                 xhr.send();
             });
         });
