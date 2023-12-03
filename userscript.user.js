@@ -52,12 +52,12 @@
         GM_setValueEx(name, JSON.stringify(obj));
     }
 
-    // 加强版GM_getValue
+    // 获取本地存储 - 双重版
     function GM_getValueEx(name, defaultValue){
         return GM_getValue(name, localStorage.getItem(name) || defaultValue);
     }
 
-    // 加强版GM_setValue
+    // 设置本地存储 - 双重版
     function GM_setValueEx(name, value){
         localStorage.setItem(name, value);
         GM_setValue(name, value);
